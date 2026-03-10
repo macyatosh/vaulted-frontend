@@ -239,11 +239,11 @@
   <ul class="nav-links">
     <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
     <li><a onclick="showPage('gallery')" id="nav-gallery">Gallery</a></li>
-    <li><a onclick="requireAuth('dashboard')" id="nav-dashboard">Studio</a></li>
+    
   </ul>
   <div class="nav-right" id="navRight">
     <button class="btn btn-ghost" onclick="openAuthModal('login')">Log In</button>
-    <button class="btn btn-gold" onclick="openAuthModal('register')">Get Started</button>
+    <button class="btn btn-gold" onclick="openAuthModal('register')">Join Free</button>
   </div>
 </nav>
 
@@ -273,9 +273,9 @@
     <div class="hero-left">
       <div class="hero-tag">Exclusive. Private. Yours.</div>
       <h1>Your Content.<br/><em>Your Rules.</em></h1>
-      <p class="hero-sub">Upload photos and videos. Lock them behind a subscription or pay-per-view. Your fans pay — you earn 94%.</p>
+      <p class="hero-sub">Subscribe or unlock exclusive photos and videos from Tanya. Premium content, just for you.</p>
       <div class="hero-actions">
-      <button class="btn btn-gold" style="padding:14px 36px;font-size:12px;" onclick="openAuthModal('register')">Start Creating →</button>
+      <button class="btn btn-gold" style="padding:14px 36px;font-size:12px;" onclick="showPage('gallery')">See Content →</button>
       <button class="btn btn-outline" style="padding:14px 36px;font-size:12px;" onclick="showPage('gallery')">See Example Gallery</button>
       </div>
       <div class="stats-row">
@@ -319,27 +319,27 @@
       <div class="plan-card">
         <div class="plan-name">Subscription</div>
         <div class="plan-price"><span>from $</span>4.99<span>/mo</span></div>
-        <p class="plan-desc">Fans pay monthly to unlock your entire library. Predictable recurring income.</p>
+        <p class="plan-desc">Subscribe monthly and unlock Tanya's entire library. Unlimited access.</p>
         <ul class="plan-features">
           <li>Set any monthly or annual price</li>
           <li>Full library access for subscribers</li>
           <li>Auto-renewing billing via Stripe</li>
           <li>Subscriber analytics</li>
         </ul>
-        <button class="btn btn-outline" style="width:100%;" onclick="openAuthModal('register')">Start Subscription</button>
+        <button class="btn btn-outline" style="width:100%;" onclick="openAuthModal('register')">Subscribe Now</button>
       </div>
       <div class="plan-card featured">
         <div class="plan-badge">Popular</div>
         <div class="plan-name">Pay-Per-View</div>
         <div class="plan-price"><span>you set the</span> $<span> price</span></div>
-        <p class="plan-desc">Lock individual posts. Fans pay to unlock exactly what they want.</p>
+        <p class="plan-desc">Unlock individual posts. Pay only for what you want to see.</p>
         <ul class="plan-features">
           <li>Custom price per photo or video</li>
           <li>Blurred preview shown to fans</li>
           <li>Instant unlock after payment</li>
           <li>Per-post revenue tracking</li>
         </ul>
-        <button class="btn btn-gold" style="width:100%;" onclick="openAuthModal('register')">Start Pay-Per-View</button>
+        <button class="btn btn-gold" style="width:100%;" onclick="openAuthModal('register')">Unlock Content</button>
       </div>
       <div class="plan-card">
         <div class="plan-name">Hybrid</div>
@@ -351,7 +351,7 @@
           <li>Unified earnings dashboard</li>
           <li>Tiered fan experience</li>
         </ul>
-        <button class="btn btn-ghost" style="width:100%;" onclick="openAuthModal('register')">Explore Hybrid</button>
+        <button class="btn btn-ghost" style="width:100%;" onclick="openAuthModal('register')">Get Started</button>
       </div>
     </div>
   </div>
@@ -687,8 +687,7 @@ async function submitAuth() {
     let data;
     if (authMode === 'register') {
       const displayName = document.getElementById('authName').value.trim();
-      const role = document.getElementById('authRole').value;
-      data = await api('POST', '/auth/register', { email, password, displayName, role });
+      data = await api('POST', '/auth/register', { email, password, displayName, role: 'fan' });
     } else {
       data = await api('POST', '/auth/login', { email, password });
     }
@@ -700,7 +699,7 @@ async function submitAuth() {
     renderNav();
     showToast('Welcome!', `Logged in as ${currentUser.displayName || currentUser.email}`);
 
-    if (currentUser.role === 'creator') showPage('dashboard');
+    showPage('gallery');
   } catch (err) {
     errEl.textContent = err.message;
   } finally {
@@ -723,18 +722,22 @@ function renderNav() {
   if (currentUser) {
     navRight.innerHTML = `
       <span style="font-size:11px;color:var(--muted);letter-spacing:.05em;">${currentUser.displayName || currentUser.email}</span>
-      ${currentUser.role === 'creator' ? `<button class="btn btn-gold" onclick="showPage('dashboard')">Studio</button>` : ''}
+      
       <button class="btn btn-ghost" onclick="logout()">Log Out</button>
     `;
   } else {
     navRight.innerHTML = `
       <button class="btn btn-ghost" onclick="openAuthModal('login')">Log In</button>
-      <button class="btn btn-gold" onclick="openAuthModal('register')">Get Started</button>
+      <button class="btn btn-gold" onclick="openAuthModal('register')">Join Free</button>
     `;
   }
 }
 
 function requireAuth(page) {
+  if (page === 'dashboard' && (!currentUser || currentUser.role !== 'creator')) {
+    showPage('gallery');
+    return;
+  }
   if (!currentUser) { openAuthModal('login'); return; }
   showPage(page);
 }
