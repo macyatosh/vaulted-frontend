@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vaulted — Premium Content</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black:#080808;--deep:#0f0f0f;--card:#141414;--border:#222;
+    --gold:#c9a84c;--gold-light:#e2c47e;--gold-dim:rgba(201,168,76,0.12);
+    --white:#f0ede8;--muted:#666;--green:#4caf50;--red:#e74c3c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--black);color:var(--white);font-family:'DM Mono',monospace;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5;}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:22px 48px;border-bottom:1px solid var(--border);background:rgba(8,8,8,0.93);backdrop-filter:blur(12px);}
+  .logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:.3em;color:var(--gold);cursor:pointer;}
+  .nav-links{display:flex;gap:32px;list-style:none;}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.15em;text-transform:uppercase;transition:color .2s;cursor:pointer;}
+  .nav-links a:hover,.nav-links a.active{color:var(--gold);}
+  .nav-right{display:flex;gap:12px;align-items:center;}
+
+  /* BTNS */
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s;text-decoration:none;}
+  .btn-gold{background:var(--gold);color:var(--black);font-weight:500;}
+  .btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);}
+  .btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold);}
+  .btn-outline:hover{background:var(--gold-dim);}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+  .btn-ghost:hover{color:var(--white);border-color:#444;}
+  .btn-danger{background:transparent;color:var(--red);border:1px solid var(--red);}
+  .btn-danger:hover{background:rgba(231,76,60,.1);}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
+
+  /* PAGES */
+  .page{display:none;padding-top:80px;min-height:100vh;}
+  .page.active{display:block;}
+
+  /* FORMS */
+  .form-group{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+  .form-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+  .form-input,.form-select,.form-textarea{background:var(--deep);border:1px solid var(--border);color:var(--white);font-family:'DM Mono',monospace;font-size:13px;padding:12px 16px;transition:border-color .2s;outline:none;width:100%;}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);}
+  .form-select option{background:var(--deep);}
+  .form-textarea{resize:vertical;min-height:90px;}
+  .form-error{font-size:11px;color:var(--red);margin-top:4px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+
+  /* AUTH MODAL */
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--deep);border:1px solid var(--border);padding:48px;max-width:440px;width:90%;position:relative;animation:fadeUp .3s ease both;}
+  .modal-close{position:absolute;top:18px;right:22px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;font-family:'DM Mono',monospace;}
+  .modal-close:hover{color:var(--white);}
+  .modal-tag{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .modal-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:28px;}
+  .modal-switch{font-size:11px;color:var(--muted);text-align:center;margin-top:20px;}
+  .modal-switch a{color:var(--gold);cursor:pointer;}
+
+  /* HERO */
+  .hero{min-height:calc(100vh - 80px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;position:relative;overflow:hidden;}
+  .hero-glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,.07) 0%,transparent 70%);border-radius:50%;pointer-events:none;}
+  .hero-tag{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.3);padding:6px 16px;margin-bottom:40px;animation:fadeUp .8s ease both;}
+  .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,10vw,108px);font-weight:300;line-height:.95;letter-spacing:-.02em;margin-bottom:28px;animation:fadeUp .8s .1s ease both;}
+  .hero h1 em{font-style:italic;color:var(--gold);}
+  .hero-sub{font-size:13px;color:var(--muted);letter-spacing:.06em;max-width:440px;line-height:1.8;margin-bottom:44px;animation:fadeUp .8s .2s ease both;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp .8s .3s ease both;}
+  .stats-row{display:flex;gap:56px;justify-content:center;margin-top:80px;padding-top:56px;border-top:1px solid var(--border);animation:fadeUp .8s .4s ease both;flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--gold);display:block;}
+  .stat-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+  /* SECTION */
+  .section{padding:90px 48px;max-width:1200px;margin:0 auto;}
+  .section-label{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5vw,54px);font-weight:300;line-height:1.1;margin-bottom:56px;}
+
+  /* PLANS */
+  .plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+  .plan-card{background:var(--card);border:1px solid var(--border);padding:36px;position:relative;transition:border-color .3s;}
+  .plan-card:hover{border-color:rgba(201,168,76,.4);}
+  .plan-card.featured{border-color:var(--gold);background:linear-gradient(135deg,#141414,#1a1608);}
+  .plan-badge{position:absolute;top:-1px;right:20px;background:var(--gold);color:var(--black);font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:4px 12px;font-weight:500;}
+  .plan-name{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+  .plan-price{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;line-height:1;margin-bottom:8px;}
+  .plan-price span{font-size:18px;color:var(--muted);}
+  .plan-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid var(--border);}
+  .plan-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+  .plan-features li{font-size:12px;color:var(--muted);display:flex;gap:10px;}
+  .plan-features li::before{content:'—';color:var(--gold);flex-shrink:0;}
+
+  /* GALLERY */
+  .gallery-header{padding:56px 48px 36px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .gallery-title{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;}
+  .filter-bar{display:flex;gap:6px;flex-wrap:wrap;}
+  .filter-btn{padding:7px 18px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;background:transparent;color:var(--muted);border:1px solid var(--border);cursor:pointer;transition:all .2s;}
+  .filter-btn:hover,.filter-btn.active{color:var(--gold);border-color:var(--gold);background:var(--gold-dim);}
+  .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px;padding:2px;}
+  .media-card{position:relative;aspect-ratio:4/5;background:var(--card);overflow:hidden;cursor:pointer;}
+  .media-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:72px;transition:transform .4s ease;}
+  .media-card:hover .media-placeholder{transform:scale(1.05);}
+  .media-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:22px;opacity:0;transition:opacity .3s;}
+  .media-card:hover .media-overlay{opacity:1;}
+  .media-lock{position:absolute;inset:0;background:rgba(8,8,8,.78);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;backdrop-filter:blur(8px);}
+  .lock-price{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);}
+  .lock-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+  .media-type-badge{position:absolute;top:14px;left:14px;background:rgba(8,8,8,.8);color:var(--muted);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--border);}
+  .media-info-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;margin-bottom:3px;}
+  .media-info-meta{font-size:10px;color:var(--muted);letter-spacing:.1em;}
+  .gallery-empty{padding:80px;text-align:center;color:var(--muted);font-size:13px;}
+
+  /* UNLOCK MODAL */
+  .unlock-option{display:flex;align-items:center;gap:14px;padding:18px;border:1px solid var(--border);cursor:pointer;transition:all .2s;margin-bottom:10px;}
+  .unlock-option:hover,.unlock-option.selected{border-color:var(--gold);background:var(--gold-dim);}
+  .unlock-option-radio{width:14px;height:14px;border:1px solid var(--muted);border-radius:50%;flex-shrink:0;transition:all .2s;}
+  .unlock-option.selected .unlock-option-radio{border-color:var(--gold);background:var(--gold);}
+  .unlock-option-name{font-size:13px;flex:1;}
+  .unlock-option-price{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);}
+  .unlock-option-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+
+  /* DASHBOARD */
+  .dashboard-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 80px);}
+  .dashboard-sidebar{background:var(--deep);border-right:1px solid var(--border);padding:36px 0;position:sticky;top:80px;height:calc(100vh - 80px);overflow-y:auto;}
+  .sidebar-section{padding:0 20px;margin-bottom:28px;}
+  .sidebar-label{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .sidebar-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
+  .sidebar-nav li a{display:flex;align-items:center;gap:10px;padding:9px 10px;color:var(--muted);text-decoration:none;font-size:12px;border-radius:2px;transition:all .2s;cursor:pointer;}
+  .sidebar-nav li a:hover,.sidebar-nav li a.active{color:var(--white);background:rgba(255,255,255,.04);}
+  .sidebar-nav li a.active{color:var(--gold);}
+  .dashboard-main{padding:44px;overflow-y:auto;}
+  .dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;flex-wrap:wrap;gap:16px;}
+  .dash-title{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;}
+  .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:40px;}
+  .metric-card{background:var(--card);border:1px solid var(--border);padding:24px;}
+  .metric-label{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .metric-value{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;line-height:1;margin-bottom:6px;}
+  .metric-delta{font-size:11px;color:var(--muted);}
+  .dash-section{display:none;}
+  .dash-section.active{display:block;}
+
+  /* UPLOAD */
+  .upload-zone{border:2px dashed var(--border);padding:56px 36px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+  .upload-zone:hover{border-color:var(--gold);background:var(--gold-dim);}
+  .upload-zone.has-file{border-color:var(--gold);background:var(--gold-dim);}
+  .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .upload-icon{font-size:36px;display:block;margin-bottom:14px;}
+  .upload-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;margin-bottom:6px;}
+  .upload-sub{font-size:11px;color:var(--muted);line-height:1.7;}
+  .upload-form{background:var(--card);border:1px solid var(--border);padding:36px;margin-top:20px;}
+  .price-toggle{display:flex;border:1px solid var(--border);width:fit-content;margin-bottom:18px;}
+  .price-tab{padding:9px 22px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;background:transparent;color:var(--muted);border:none;cursor:pointer;transition:all .2s;}
+  .price-tab.active{background:var(--gold);color:var(--black);}
+
+  /* TABLE */
+  .content-table{width:100%;border-collapse:collapse;}
+  .content-table th{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);}
+  .content-table td{padding:14px 14px;border-bottom:1px solid rgba(34,34,34,.5);font-size:12px;vertical-align:middle;}
+  .content-table tr:hover td{background:rgba(255,255,255,.02);}
+  .status-badge{display:inline-block;padding:3px 10px;font-size:9px;letter-spacing:.15em;text-transform:uppercase;}
+  .badge-live{background:rgba(76,175,80,.12);color:#4caf50;border:1px solid rgba(76,175,80,.3);}
+  .badge-draft{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--border);}
+  .badge-sub{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,168,76,.3);}
+  .badge-ppv{background:rgba(231,76,60,.08);color:#e74c3c;border:1px solid rgba(231,76,60,.25);}
+  .badge-free{background:rgba(76,175,80,.08);color:#4caf50;border:1px solid rgba(76,175,80,.2);}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:28px;right:28px;background:var(--card);border:1px solid var(--gold);padding:14px 22px;font-size:12px;z-index:1000;transform:translateY(80px);opacity:0;transition:all .3s;max-width:300px;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast-title{color:var(--gold);font-size:10px;letter-spacing:.1em;margin-bottom:3px;}
+  .toast.error{border-color:var(--red);}
+  .toast.error .toast-title{color:var(--red);}
+
+  /* LOADER */
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+  hr.divider{border:none;border-top:1px solid var(--border);}
+
+  .info-box{background:var(--gold-dim);border:1px solid rgba(201,168,76,.25);padding:14px 18px;font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+
+  @media(max-width:768px){
+    nav{padding:16px 20px;}
+    .nav-links{display:none;}
+    .section{padding:56px 20px;}
+    .metrics-grid{grid-template-columns:1fr 1fr;}
+    .dashboard-layout{grid-template-columns:1fr;}
+    .dashboard-sidebar{display:none;}
+    .gallery-header{padding:36px 20px 28px;flex-direction:column;align-items:flex-start;}
+    .form-row{grid-template-columns:1fr;}
+    .dashboard-main{padding:24px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')">Vaulted</div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a onclick="showPage('gallery')" id="nav-gallery">Gallery</a></li>
+    <li><a onclick="requireAuth('dashboard')" id="nav-dashboard">Studio</a></li>
+  </ul>
+  <div class="nav-right" id="navRight">
+    <button class="btn btn-ghost" onclick="openAuthModal('login')">Log In</button>
+    <button class="btn btn-gold" onclick="openAuthModal('register')">Get Started</button>
+  </div>
+</nav>
+
+<!-- ═══ HOME ══════════════════════════════════════════════ -->
+<div id="home" class="page active">
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-tag">Exclusive. Private. Yours.</div>
+    <h1>Your Content.<br/><em>Your Rules.</em></h1>
+    <p class="hero-sub">Upload photos and videos. Lock them behind a subscription or pay-per-view. Your fans pay — you earn 94%.</p>
+    <div class="hero-actions">
+      <button class="btn btn-gold" style="padding:14px 36px;font-size:12px;" onclick="openAuthModal('register')">Start Creating →</button>
+      <button class="btn btn-outline" style="padding:14px 36px;font-size:12px;" onclick="showPage('gallery')">See Example Gallery</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-num">94%</span><span class="stat-label">Payout Rate</span></div>
+      <div class="stat"><span class="stat-num">$0</span><span class="stat-label">Setup Fees</span></div>
+      <div class="stat"><span class="stat-num">2</span><span class="stat-label">Pay Models</span></div>
+      <div class="stat"><span class="stat-num">24h</span><span class="stat-label">Payout Cycle</span></div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="section">
+    <div class="section-label">Monetisation</div>
+    <div class="section-title">Two ways to <em style="font-style:italic;color:var(--gold);">get paid</em></div>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-name">Subscription</div>
+        <div class="plan-price"><span>from $</span>4.99<span>/mo</span></div>
+        <p class="plan-desc">Fans pay monthly to unlock your entire library. Predictable recurring income.</p>
+        <ul class="plan-features">
+          <li>Set any monthly or annual price</li>
+          <li>Full library access for subscribers</li>
+          <li>Auto-renewing billing via Stripe</li>
+          <li>Subscriber analytics</li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%;" onclick="openAuthModal('register')">Start Subscription</button>
+      </div>
+      <div class="plan-card featured">
+        <div class="plan-badge">Popular</div>
+        <div class="plan-name">Pay-Per-View</div>
+        <div class="plan-price"><span>you set the</span> $<span> price</span></div>
+        <p class="plan-desc">Lock individual posts. Fans pay to unlock exactly what they want.</p>
+        <ul class="plan-features">
+          <li>Custom price per photo or video</li>
+          <li>Blurred preview shown to fans</li>
+          <li>Instant unlock after payment</li>
+          <li>Per-post revenue tracking</li>
+        </ul>
+        <button class="btn btn-gold" style="width:100%;" onclick="openAuthModal('register')">Start Pay-Per-View</button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Hybrid</div>
+        <div class="plan-price" style="font-size:32px;">Both Together</div>
+        <p class="plan-desc">Run subscriptions AND PPV locks simultaneously for maximum earnings.</p>
+        <ul class="plan-features">
+          <li>Base subscription + premium PPV add-ons</li>
+          <li>Subscriber discounts on PPV</li>
+          <li>Unified earnings dashboard</li>
+          <li>Tiered fan experience</li>
+        </ul>
+        <button class="btn btn-ghost" style="width:100%;" onclick="openAuthModal('register')">Explore Hybrid</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ GALLERY ════════════════════════════════════════════ -->
+<div id="gallery" class="page">
+  <div class="gallery-header">
+    <div>
+      <div class="section-label" style="margin-bottom:6px;">Content Gallery</div>
+      <div class="gallery-title">Latest Uploads</div>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterGallery('all',this)">All</button>
+      <button class="filter-btn" onclick="filterGallery('photo',this)">Photos</button>
+      <button class="filter-btn" onclick="filterGallery('video',this)">Videos</button>
+      <button class="filter-btn" onclick="filterGallery('free',this)">Free</button>
+      <button class="filter-btn" onclick="filterGallery('subscription',this)">Subscription</button>
+      <button class="filter-btn" onclick="filterGallery('ppv',this)">Pay-Per-View</button>
+    </div>
+  </div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</div>
+
+<!-- ═══ DASHBOARD ══════════════════════════════════════════ -->
+<div id="dashboard" class="page">
+  <div class="dashboard-layout">
+    <div class="dashboard-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Overview</div>
+        <ul class="sidebar-nav">
+          <li><a class="active" onclick="showDash('overview',this)">📊 &nbsp;Dashboard</a></li>
+          <li><a onclick="showDash('upload',this)">⬆ &nbsp;Upload</a></li>
+          <li><a onclick="showDash('manage',this)">🗂 &nbsp;My Content</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Money</div>
+        <ul class="sidebar-nav">
+          <li><a onclick="showDash('earnings',this)">💰 &nbsp;Earnings</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <ul class="sidebar-nav">
+          <li><a onclick="showDash('settings',this)">⚙ &nbsp;Settings</a></li>
+          <li><a onclick="logout()" style="color:var(--red)!important;">↩ &nbsp;Log Out</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dashboard-main">
+      <!-- OVERVIEW -->
+      <div class="dash-section active" id="dash-overview">
+        <div class="dash-header">
+          <div class="dash-title">Good to see you ✦</div>
+          <button class="btn btn-gold" onclick="showDash('upload',null)">+ Upload New</button>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-card"><div class="metric-label">Total Earnings</div><div class="metric-value" id="m-earnings">$0</div><div class="metric-delta">Lifetime (creator cut)</div></div>
+          <div class="metric-card"><div class="metric-label">PPV Earnings</div><div class="metric-value" id="m-ppv">$0</div><div class="metric-delta">From unlocks</div></div>
+          <div class="metric-card"><div class="metric-label">Sub Earnings</div><div class="metric-value" id="m-sub">$0</div><div class="metric-delta">From subscriptions</div></div>
+          <div class="metric-card"><div class="metric-label">Total Posts</div><div class="metric-value" id="m-posts">0</div><div class="metric-delta">Live + drafts</div></div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);padding:40px;text-align:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:10px;">Welcome to your Creator Studio</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.8;max-width:380px;margin:0 auto 24px;">Upload your first photo or video, set a price, and share your gallery link with your audience.</div>
+          <button class="btn btn-gold" onclick="showDash('upload',null)">Upload First Post →</button>
+        </div>
+      </div>
+
+      <!-- UPLOAD -->
+      <div class="dash-section" id="dash-upload">
+        <div class="dash-header"><div class="dash-title">Upload Content</div></div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept="image/*,video/*" multiple onchange="handleFileSelect(event)" id="fileInput"/>
+          <span class="upload-icon">⬆</span>
+          <div class="upload-title">Drop photos & videos here</div>
+          <div class="upload-sub">JPG, PNG, GIF, WebP, MP4, MOV, WebM · Up to 4GB</div>
+        </div>
+        <div class="upload-form" id="uploadForm" style="display:none;">
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;">Post Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Title *</label>
+              <input class="form-input" type="text" id="postTitle" placeholder="Give your post a title…"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Media Type</label>
+              <select class="form-select" id="postMediaType"><option value="photo">Photo</option><option value="video">Video</option></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="postDesc" placeholder="Caption or description…"></textarea>
+          </div>
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Pricing</div>
+          <div class="price-toggle">
+            <button class="price-tab active" onclick="setPriceTab('free',this)">Free</button>
+            <button class="price-tab" onclick="setPriceTab('subscription',this)">Subscription</button>
+            <button class="price-tab" onclick="setPriceTab('ppv',this)">Pay-Per-View</button>
+          </div>
+          <div id="ppvPriceArea" style="display:none;margin-bottom:16px;">
+            <div class="form-group" style="max-width:200px;">
+              <label class="form-label">Price (USD)</label>
+              <input class="form-input" type="number" min="0.99" step="0.01" placeholder="9.99" id="postPrice"/>
+            </div>
+          </div>
+          <div id="subNote" class="info-box" style="display:none;">
+            Subscribers-only: only fans with an active subscription will see this post.
+          </div>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;">
+            <button class="btn btn-gold" style="padding:13px 32px;" onclick="publishPost()" id="publishBtn">Publish Post</button>
+            <button class="btn btn-ghost" onclick="saveDraft()" id="draftBtn">Save as Draft</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MANAGE -->
+      <div class="dash-section" id="dash-manage">
+        <div class="dash-header">
+          <div class="dash-title">My Content</div>
+          <button class="btn btn-gold" onclick="showDash('upload',null)">+ New Post</button>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);overflow:auto;">
+          <table class="content-table">
+            <thead><tr><th></th><th>Title</th><th>Type</th><th>Access</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="contentTableBody"><tr><td colspan="7" style="text-align:center;padding:60px;color:var(--muted);">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EARNINGS -->
+      <div class="dash-section" id="dash-earnings">
+        <div class="dash-header"><div class="dash-title">Earnings</div></div>
+        <div id="earningsContent" style="background:var(--card);border:1px solid var(--border);padding:60px;text-align:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:56px;color:var(--gold);" id="totalEarningsDisplay">$0.00</div>
+          <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:8px;">Total Lifetime Creator Earnings</div>
+        </div>
+        <div style="margin-top:2px;background:var(--card);border:1px solid var(--border);overflow:auto;">
+          <table class="content-table">
+            <thead><tr><th>Date</th><th>Type</th><th>Post</th><th>Fan</th><th>Amount</th><th>Your Cut</th></tr></thead>
+            <tbody id="transactionsBody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);">No transactions yet.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="dash-section" id="dash-settings">
+        <div class="dash-header"><div class="dash-title">Settings</div></div>
+        <div class="upload-form">
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;">Creator Profile</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Display Name</label>
+              <input class="form-input" type="text" id="settingName" placeholder="Your name or alias"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gallery URL Slug</label>
+              <input class="form-input" type="text" id="settingSlug" placeholder="yourname"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bio</label>
+            <textarea class="form-textarea" id="settingBio" placeholder="Tell fans what to expect…"></textarea>
+          </div>
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Subscription Pricing</div>
+          <div class="form-row" style="max-width:480px;">
+            <div class="form-group">
+              <label class="form-label">Monthly Price ($)</label>
+              <input class="form-input" type="number" min="1" step="0.01" placeholder="9.99" id="settingMonthly"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Annual Price ($)</label>
+              <input class="form-input" type="number" min="1" step="0.01" placeholder="79.99" id="settingAnnual"/>
+            </div>
+          </div>
+          <button class="btn btn-gold" style="padding:13px 32px;" onclick="saveSettings()">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-bg" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="modal-tag" id="authTag">Create Account</div>
+    <div class="modal-title" id="authTitle">Join Vaulted</div>
+    <div id="authRegisterFields">
+      <div class="form-group">
+        <label class="form-label">I am a…</label>
+        <select class="form-select" id="authRole">
+          <option value="creator">Creator — I want to sell content</option>
+          <option value="fan">Fan — I want to buy content</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Display Name</label>
+        <input class="form-input" type="text" id="authName" placeholder="Your name"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="authEmail" placeholder="you@example.com"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="authPassword" placeholder="Min 8 characters"/>
+    </div>
+    <div class="form-error" id="authError" style="margin-bottom:16px;"></div>
+    <button class="btn btn-gold" style="width:100%;padding:14px;" id="authSubmitBtn" onclick="submitAuth()">
+      Create Account
+    </button>
+    <div class="modal-switch" id="authSwitch">
+      Already have an account? <a onclick="toggleAuthMode()">Log in</a>
+    </div>
+  </div>
+</div>
+
+<!-- UNLOCK MODAL -->
+<div class="modal-bg" id="unlockModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeUnlockModal()">✕</button>
+    <div class="modal-tag">Locked Content</div>
+    <div class="modal-title" id="unlockTitle">Unlock This Post</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:24px;" id="unlockSub"></div>
+    <div id="unlockOptions"></div>
+    <button class="btn btn-gold" style="width:100%;padding:15px;font-size:12px;" onclick="proceedUnlock()" id="unlockProceedBtn">
+      Continue to Payment →
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="toast-title" id="toastTitle">Success</div><div id="toastMsg"></div></div>
+
+<script>
+// ════════ CONFIG ════════
+const API = 'https://vaulted-backend-production.up.railway.app/api'; // ← Change to your deployed backend URL
+
+// ════════ STATE ════════
+let currentUser = null;
+let authToken = localStorage.getItem('vaulted_token');
+let authMode = 'register';
+let selectedPriceType = 'free';
+let selectedUploadFiles = [];
+let currentUnlockPost = null;
+let selectedUnlockOption = null;
+let myPosts = [];
+
+// ════════ INIT ════════
+window.addEventListener('DOMContentLoaded', async () => {
+  if (authToken) await fetchMe();
+  renderNav();
+  renderGallery(demoItems);
+});
+
+// ════════ API HELPERS ════════
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+  };
+  if (authToken) opts.headers['Authorization'] = 'Bearer ' + authToken;
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+async function apiForm(path, formData) {
+  const res = await fetch(API + path, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + authToken },
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Upload failed');
+  return data;
+}
+
+// ════════ AUTH ════════
+async function fetchMe() {
+  try {
+    const { user } = await api('GET', '/auth/me');
+    currentUser = user;
+  } catch {
+    authToken = null;
+    localStorage.removeItem('vaulted_token');
+  }
+}
+
+function openAuthModal(mode) {
+  authMode = mode;
+  setAuthMode(mode);
+  document.getElementById('authModal').classList.add('open');
+  document.getElementById('authError').textContent = '';
+}
+
+function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
+
+function setAuthMode(mode) {
+  const isRegister = mode === 'register';
+  document.getElementById('authTag').textContent = isRegister ? 'Create Account' : 'Welcome Back';
+  document.getElementById('authTitle').textContent = isRegister ? 'Join Vaulted' : 'Log In';
+  document.getElementById('authSubmitBtn').textContent = isRegister ? 'Create Account' : 'Log In';
+  document.getElementById('authRegisterFields').style.display = isRegister ? 'block' : 'none';
+  document.getElementById('authSwitch').innerHTML = isRegister
+    ? 'Already have an account? <a onclick="toggleAuthMode()">Log in</a>'
+    : 'New here? <a onclick="toggleAuthMode()">Create account</a>';
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'register' ? 'login' : 'register';
+  setAuthMode(authMode);
+  document.getElementById('authError').textContent = '';
+}
+
+async function submitAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errEl = document.getElementById('authError');
+  const btn = document.getElementById('authSubmitBtn');
+
+  if (!email || !password) { errEl.textContent = 'Email and password are required.'; return; }
+
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  try {
+    let data;
+    if (authMode === 'register') {
+      const displayName = document.getElementById('authName').value.trim();
+      const role = document.getElementById('authRole').value;
+      data = await api('POST', '/auth/register', { email, password, displayName, role });
+    } else {
+      data = await api('POST', '/auth/login', { email, password });
+    }
+
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('vaulted_token', authToken);
+    closeAuthModal();
+    renderNav();
+    showToast('Welcome!', `Logged in as ${currentUser.displayName || currentUser.email}`);
+
+    if (currentUser.role === 'creator') showPage('dashboard');
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.innerHTML = authMode === 'register' ? 'Create Account' : 'Log In';
+    btn.disabled = false;
+  }
+}
+
+function logout() {
+  authToken = null;
+  currentUser = null;
+  localStorage.removeItem('vaulted_token');
+  renderNav();
+  showPage('home');
+  showToast('Logged Out', 'See you next time!');
+}
+
+function renderNav() {
+  const navRight = document.getElementById('navRight');
+  if (currentUser) {
+    navRight.innerHTML = `
+      <span style="font-size:11px;color:var(--muted);letter-spacing:.05em;">${currentUser.displayName || currentUser.email}</span>
+      ${currentUser.role === 'creator' ? `<button class="btn btn-gold" onclick="showPage('dashboard')">Studio</button>` : ''}
+      <button class="btn btn-ghost" onclick="logout()">Log Out</button>
+    `;
+  } else {
+    navRight.innerHTML = `
+      <button class="btn btn-ghost" onclick="openAuthModal('login')">Log In</button>
+      <button class="btn btn-gold" onclick="openAuthModal('register')">Get Started</button>
+    `;
+  }
+}
+
+function requireAuth(page) {
+  if (!currentUser) { openAuthModal('login'); return; }
+  showPage(page);
+}
+
+// ════════ PAGE NAV ════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  ['home','gallery','dashboard'].forEach(p => {
+    const el = document.getElementById('nav-' + p);
+    if (el) el.classList.toggle('active', p === id);
+  });
+  if (id === 'gallery') renderGallery(demoItems);
+  if (id === 'dashboard') { loadDashboard(); }
+  window.scrollTo(0, 0);
+}
+
+// ════════ GALLERY ════════
+const demoItems = [
+  { _id:'1',title:'Golden Hour',mediaType:'photo',accessType:'free',ppvPrice:0,emoji:'🌅',colors:['#2c1810','#6b3a2a'] },
+  { _id:'2',title:'Behind the Lens',mediaType:'video',accessType:'ppv',ppvPrice:9.99,emoji:'🎬',colors:['#0a0a1a','#1a1030'] },
+  { _id:'3',title:'Studio Session #01',mediaType:'photo',accessType:'subscription',ppvPrice:0,emoji:'📸',colors:['#0d1a0d','#1a3020'] },
+  { _id:'4',title:'Evening Look',mediaType:'photo',accessType:'ppv',ppvPrice:4.99,emoji:'✨',colors:['#1a0a1a','#301040'] },
+  { _id:'5',title:'Vlog — Day in My Life',mediaType:'video',accessType:'ppv',ppvPrice:7.99,emoji:'🎥',colors:['#1a1000','#302010'] },
+  { _id:'6',title:'Morning Routine',mediaType:'video',accessType:'subscription',ppvPrice:0,emoji:'☀️',colors:['#1a0e00','#2c1800'] },
+  { _id:'7',title:'Candid Collection',mediaType:'photo',accessType:'subscription',ppvPrice:0,emoji:'🌸',colors:['#1a0a10','#301020'] },
+  { _id:'8',title:'Exclusive — August',mediaType:'photo',accessType:'ppv',ppvPrice:14.99,emoji:'🔒',colors:['#0a0a0a','#1a1010'] },
+  { _id:'9',title:'Travel Diary',mediaType:'video',accessType:'free',ppvPrice:0,emoji:'✈️',colors:['#001520','#003040'] },
+];
+
+let galleryFilter = 'all';
+
+function renderGallery(items) {
+  const filtered = items.filter(i => {
+    if (galleryFilter === 'all') return true;
+    if (galleryFilter === 'photo' || galleryFilter === 'video') return i.mediaType === galleryFilter;
+    return i.accessType === galleryFilter;
+  });
+
+  const grid = document.getElementById('galleryGrid');
+  if (!filtered.length) { grid.innerHTML = '<div class="gallery-empty">No posts found.</div>'; return; }
+
+  grid.innerHTML = filtered.map(item => {
+    const locked = item.accessType !== 'free';
+    return `
+      <div class="media-card" data-id="${item._id}">
+        <div class="media-placeholder" style="background:linear-gradient(135deg,${item.colors[0]},${item.colors[1]});">${item.emoji}</div>
+        <div class="media-type-badge">${item.mediaType}</div>
+        ${locked ? `
+        <div class="media-lock" onclick="openUnlockModal(${JSON.stringify(item).replace(/"/g,'&quot;')})">
+          <div style="font-size:28px;">🔒</div>
+          ${item.accessType === 'ppv'
+            ? `<div class="lock-price">$${item.ppvPrice.toFixed(2)}</div><div class="lock-label">Pay to Unlock</div>`
+            : `<div class="lock-price" style="font-size:16px;">Subscribers Only</div><div class="lock-label">Subscribe to Access</div>`}
+          <button class="btn btn-gold" style="margin-top:8px;padding:9px 22px;">Unlock</button>
+        </div>` : ''}
+        <div class="media-overlay">
+          <div class="media-info-title">${item.title}</div>
+          <div class="media-info-meta">${item.mediaType} · ${item.accessType === 'free' ? 'Free' : item.accessType === 'subscription' ? 'Subscription' : '$'+item.ppvPrice.toFixed(2)}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterGallery(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  galleryFilter = type;
+  renderGallery(demoItems);
+}
+
+// ════════ UNLOCK MODAL ════════
+function openUnlockModal(post) {
+  if (!currentUser) { openAuthModal('login'); return; }
+  currentUnlockPost = post;
+  selectedUnlockOption = null;
+
+  document.getElementById('unlockTitle').textContent = post.title;
+  document.getElementById('unlockSub').textContent = 'Choose how to access this content:';
+
+  const opts = [];
+  // Always show subscription option
+  opts.push({ type: 'subscription', label: 'Monthly Subscription', desc: 'Unlock entire library', price: '$9.99/mo' });
+  if (post.accessType === 'ppv') {
+    opts.push({ type: 'ppv', label: 'Unlock This Post', desc: 'One-time purchase', price: `$${post.ppvPrice.toFixed(2)}` });
+  }
+
+  document.getElementById('unlockOptions').innerHTML = opts.map((o, i) => `
+    <div class="unlock-option ${i===0?'selected':''}" onclick="selectUnlockOption(this,'${o.type}')">
+      <div class="unlock-option-radio ${i===0?'selected':''}"></div>
+      <div>
+        <div class="unlock-option-name">${o.label}</div>
+        <div class="unlock-option-desc">${o.desc}</div>
+      </div>
+      <div class="unlock-option-price">${o.price}</div>
+    </div>
+  `).join('');
+
+  selectedUnlockOption = opts[0].type;
+  document.getElementById('unlockModal').classList.add('open');
+}
+
+function selectUnlockOption(el, type) {
+  document.querySelectorAll('.unlock-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedUnlockOption = type;
+}
+
+function closeUnlockModal() { document.getElementById('unlockModal').classList.remove('open'); }
+
+async function proceedUnlock() {
+  if (!selectedUnlockOption || !currentUnlockPost) return;
+  const btn = document.getElementById('unlockProceedBtn');
+  btn.innerHTML = '<span class="spinner"></span> Loading…';
+  btn.disabled = true;
+
+  try {
+    if (selectedUnlockOption === 'subscription') {
+      // Get subscription order from backend
+      const data = await api('POST', '/payments/subscription/create', {
+        creatorSlug: currentUnlockPost.creatorSlug || 'demo-creator',
+        interval: 'month',
+      });
+      openRazorpay({
+        key: data.keyId,
+        subscription_id: data.subscriptionId,
+        name: 'Vaulted',
+        description: `Subscription to ${data.creatorName}`,
+        amount: data.amount,
+        currency: data.currency,
+        prefill: { name: data.fanName, email: data.fanEmail },
+        theme: { color: '#C9A84C' },
+        handler: async (response) => {
+          await api('POST', '/payments/subscription/verify', {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_subscription_id: response.razorpay_subscription_id,
+            razorpay_signature: response.razorpay_signature,
+            creatorSlug: currentUnlockPost.creatorSlug || 'demo-creator',
+            interval: 'month',
+          });
+          closeUnlockModal();
+          showToast('Subscribed! 🎉', 'You now have full access.');
+          renderGallery(demoItems);
+        }
+      });
+    } else {
+      // PPV — create order
+      const data = await api('POST', '/payments/ppv/create', { postId: currentUnlockPost._id });
+      openRazorpay({
+        key: data.keyId,
+        order_id: data.orderId,
+        name: 'Vaulted',
+        description: data.postTitle,
+        amount: data.amount,
+        currency: data.currency,
+        prefill: { name: data.fanName, email: data.fanEmail },
+        theme: { color: '#C9A84C' },
+        handler: async (response) => {
+          await api('POST', '/payments/ppv/verify', {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            postId: currentUnlockPost._id,
+          });
+          closeUnlockModal();
+          showToast('Unlocked! 🎉', 'Content is now available.');
+          renderGallery(demoItems);
+        }
+      });
+    }
+  } catch (err) {
+    showToast('Error', err.message, true);
+  } finally {
+    btn.innerHTML = 'Continue to Payment →';
+    btn.disabled = false;
+  }
+}
+
+function openRazorpay(options) {
+  // Load Razorpay script if not loaded yet
+  if (!window.Razorpay) {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => { const rzp = new window.Razorpay(options); rzp.open(); };
+    document.body.appendChild(script);
+  } else {
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  }
+}
+
+// ════════ DASHBOARD ════════
+async function loadDashboard() {
+  try {
+    const [postsData, earningsData] = await Promise.all([
+      api('GET', '/posts/my'),
+      api('GET', '/payments/my-earnings'),
+    ]);
+    myPosts = postsData.posts || [];
+
+    document.getElementById('m-posts').textContent = myPosts.length;
+    document.getElementById('m-earnings').textContent = '$' + earningsData.totalEarnings.toFixed(2);
+    document.getElementById('m-ppv').textContent = '$' + earningsData.ppvEarnings.toFixed(2);
+    document.getElementById('m-sub').textContent = '$' + earningsData.subscriptionEarnings.toFixed(2);
+    document.getElementById('totalEarningsDisplay').textContent = '$' + earningsData.totalEarnings.toFixed(2);
+
+    renderTransactions(earningsData.transactions || []);
+
+    // Pre-fill settings
+    if (currentUser) {
+      document.getElementById('settingName').value = currentUser.displayName || '';
+      document.getElementById('settingSlug').value = currentUser.slug || '';
+      document.getElementById('settingBio').value = currentUser.bio || '';
+      document.getElementById('settingMonthly').value = currentUser.subscriptionMonthlyPrice || '';
+      document.getElementById('settingAnnual').value = currentUser.subscriptionAnnualPrice || '';
+    }
+  } catch(err) {
+    // If not authenticated yet or API not connected, show zeros
+    console.warn('Dashboard load:', err.message);
+  }
+}
+
+function showDash(id, clickedEl) {
+  document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('dash-' + id).classList.add('active');
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  if (clickedEl) clickedEl.classList.add('active');
+  if (id === 'manage') renderContentTable();
+}
+
+function renderTransactions(transactions) {
+  const tbody = document.getElementById('transactionsBody');
+  if (!transactions.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);">No transactions yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = transactions.map(t => `
+    <tr>
+      <td style="color:var(--muted);">${new Date(t.createdAt).toLocaleDateString()}</td>
+      <td><span class="status-badge ${t.type==='ppv'?'badge-ppv':'badge-sub'}">${t.type}</span></td>
+      <td style="color:var(--muted);">${t.post?.title || '—'}</td>
+      <td style="color:var(--muted);">${t.fan?.displayName || t.fan?.email || '—'}</td>
+      <td style="color:var(--muted);">$${t.amountUsd?.toFixed(2)}</td>
+      <td style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:16px;">$${t.creatorEarningsUsd?.toFixed(2)}</td>
+    </tr>
+  `).join('');
+}
+
+// ════════ UPLOAD ════════
+function handleFileSelect(e) {
+  const files = e.target.files;
+  if (!files.length) return;
+  selectedUploadFiles = Array.from(files);
+  const zone = document.getElementById('uploadZone');
+  zone.classList.add('has-file');
+  zone.querySelector('.upload-title').textContent = files.length === 1 ? files[0].name : `${files.length} files selected`;
+  zone.querySelector('.upload-sub').textContent = 'Ready to configure and publish.';
+  document.getElementById('uploadForm').style.display = 'block';
+  const isVideo = files[0].type.startsWith('video');
+  document.getElementById('postMediaType').value = isVideo ? 'video' : 'photo';
+}
+
+function setPriceTab(type, btn) {
+  document.querySelectorAll('.price-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  selectedPriceType = type;
+  document.getElementById('ppvPriceArea').style.display = type === 'ppv' ? 'block' : 'none';
+  document.getElementById('subNote').style.display = type === 'subscription' ? 'block' : 'none';
+}
+
+async function publishPost() { await submitPost('live'); }
+async function saveDraft() { await submitPost('draft'); }
+
+async function submitPost(status) {
+  const title = document.getElementById('postTitle').value.trim();
+  if (!title) { showToast('Missing Title', 'Please enter a title.', true); return; }
+  if (!selectedUploadFiles.length) { showToast('No File', 'Please select a file.', true); return; }
+
+  const btn = document.getElementById(status === 'live' ? 'publishBtn' : 'draftBtn');
+  btn.innerHTML = '<span class="spinner"></span> Uploading…';
+  btn.disabled = true;
+
+  try {
+    const form = new FormData();
+    form.append('file', selectedUploadFiles[0]);
+    form.append('title', title);
+    form.append('description', document.getElementById('postDesc').value);
+    form.append('accessType', selectedPriceType);
+    form.append('status', status);
+    if (selectedPriceType === 'ppv') {
+      form.append('ppvPrice', document.getElementById('postPrice').value);
+    }
+
+    await apiForm('/posts/upload', form);
+
+    showToast(status === 'live' ? 'Published!' : 'Draft Saved', `"${title}" ${status === 'live' ? 'is now live.' : 'saved as draft.'}`);
+    resetUploadForm();
+    await loadDashboard();
+    showDash('manage', null);
+  } catch(err) {
+    showToast('Upload Failed', err.message, true);
+  } finally {
+    btn.innerHTML = status === 'live' ? 'Publish Post' : 'Save as Draft';
+    btn.disabled = false;
+  }
+}
+
+function resetUploadForm() {
+  selectedUploadFiles = [];
+  document.getElementById('fileInput').value = '';
+  document.getElementById('uploadZone').classList.remove('has-file');
+  document.getElementById('uploadZone').querySelector('.upload-title').textContent = 'Drop photos & videos here';
+  document.getElementById('uploadZone').querySelector('.upload-sub').textContent = 'JPG, PNG, GIF, WebP, MP4, MOV, WebM · Up to 4GB';
+  document.getElementById('uploadForm').style.display = 'none';
+  document.getElementById('postTitle').value = '';
+  document.getElementById('postDesc').value = '';
+  document.getElementById('postPrice').value = '';
+}
+
+function renderContentTable() {
+  const tbody = document.getElementById('contentTableBody');
+  if (!myPosts.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:60px;color:var(--muted);">No posts yet — upload your first piece of content.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = myPosts.map(p => `
+    <tr>
+      <td>${p.mediaType === 'video' ? '🎬' : '📸'}</td>
+      <td style="color:var(--white);">${p.title}</td>
+      <td style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;">${p.mediaType}</td>
+      <td><span class="status-badge badge-${p.accessType}">${p.accessType}</span></td>
+      <td style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:16px;">${p.accessType==='ppv'?'$'+p.ppvPrice.toFixed(2):'—'}</td>
+      <td><span class="status-badge badge-${p.status}">${p.status}</span></td>
+      <td>
+        <button class="btn btn-ghost" style="padding:5px 12px;font-size:10px;" onclick="toggleStatus('${p._id}','${p.status}')">
+          ${p.status === 'live' ? 'Unpublish' : 'Publish'}
+        </button>
+        <button class="btn btn-danger" style="padding:5px 12px;font-size:10px;margin-left:6px;" onclick="deletePost('${p._id}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function toggleStatus(id, current) {
+  try {
+    const newStatus = current === 'live' ? 'draft' : 'live';
+    await api('PATCH', '/posts/' + id, { status: newStatus });
+    await loadDashboard();
+    renderContentTable();
+    showToast('Updated', `Post is now ${newStatus}.`);
+  } catch(err) { showToast('Error', err.message, true); }
+}
+
+async function deletePost(id) {
+  if (!confirm('Delete this post? This cannot be undone.')) return;
+  try {
+    await api('DELETE', '/posts/' + id);
+    myPosts = myPosts.filter(p => p._id !== id);
+    renderContentTable();
+    document.getElementById('m-posts').textContent = myPosts.length;
+    showToast('Deleted', 'Post removed from your library.');
+  } catch(err) { showToast('Error', err.message, true); }
+}
+
+async function saveSettings() {
+  try {
+    await api('PATCH', '/auth/profile', {
+      displayName: document.getElementById('settingName').value.trim(),
+      slug: document.getElementById('settingSlug').value.trim(),
+      bio: document.getElementById('settingBio').value.trim(),
+      subscriptionMonthlyPrice: parseFloat(document.getElementById('settingMonthly').value) || 9.99,
+      subscriptionAnnualPrice: parseFloat(document.getElementById('settingAnnual').value) || 79.99,
+    });
+    await fetchMe();
+    renderNav();
+    showToast('Saved', 'Profile and pricing updated.');
+  } catch(err) { showToast('Error', err.message, true); }
+}
+
+// ════════ TOAST ════════
+function showToast(title, msg, isError = false) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastMsg').textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Close modals on bg click
+['authModal','unlockModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
