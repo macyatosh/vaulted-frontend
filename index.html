@@ -52,13 +52,34 @@
   /* AUTH MODAL */
   .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
   .modal-bg.open{display:flex;}
-  .modal{background:var(--deep);border:1px solid var(--border);padding:48px;max-width:440px;width:90%;position:relative;animation:fadeUp .3s ease both;}
+  .modal{background:var(--deep);border:1px solid var(--border);padding:48px;max-width:480px;width:90%;position:relative;animation:fadeUp .3s ease both;}
   .modal-close{position:absolute;top:18px;right:22px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;font-family:'DM Mono',monospace;}
   .modal-close:hover{color:var(--white);}
   .modal-tag{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
   .modal-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:28px;}
   .modal-switch{font-size:11px;color:var(--muted);text-align:center;margin-top:20px;}
   .modal-switch a{color:var(--gold);cursor:pointer;}
+
+  /* ROLE SELECTION */
+  .role-select-screen{text-align:center;}
+  .role-select-screen .modal-title{margin-bottom:8px;}
+  .role-select-subtitle{font-size:12px;color:var(--muted);margin-bottom:32px;letter-spacing:.04em;}
+  .role-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;}
+  .role-card{border:1px solid var(--border);padding:28px 20px;cursor:pointer;transition:all .25s;position:relative;background:transparent;text-align:center;}
+  .role-card:hover{border-color:rgba(201,168,76,.5);background:var(--gold-dim);transform:translateY(-2px);}
+  .role-card.selected{border-color:var(--gold);background:var(--gold-dim);}
+  .role-card.selected::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--gold);font-size:11px;font-weight:bold;}
+  .role-icon{font-size:36px;display:block;margin-bottom:12px;}
+  .role-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--white);margin-bottom:6px;}
+  .role-desc{font-size:10px;color:var(--muted);letter-spacing:.05em;line-height:1.6;}
+  .role-perks{margin-top:10px;display:flex;flex-direction:column;gap:4px;}
+  .role-perk{font-size:9px;color:var(--muted);letter-spacing:.08em;}
+  .role-perk span{color:var(--gold);margin-right:5px;}
+  .modal-back{background:none;border:none;color:var(--muted);font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-family:'DM Mono',monospace;margin-bottom:20px;display:flex;align-items:center;gap:6px;padding:0;}
+  .modal-back:hover{color:var(--white);}
+  .role-label-badge{display:inline-block;font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:2px 10px;border:1px solid rgba(201,168,76,.4);color:var(--gold);margin-bottom:20px;}
+  .creator-badge{background:rgba(201,168,76,.08);}
+  .fan-badge{background:rgba(76,175,80,.06);border-color:rgba(76,175,80,.35);color:#4caf50;}
 
   /* HERO */
   .hero{min-height:calc(100vh - 80px);display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 0 0 72px;position:relative;overflow:hidden;gap:0;}
@@ -235,11 +256,11 @@
 
 <!-- NAV -->
 <nav>
-  <div class="logo" onclick="showPage('home')">Tanya</div>
+  <div class="logo site-name" onclick="showPage('home')">Tanya</div>
   <ul class="nav-links">
     <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
     <li><a onclick="showPage('gallery')" id="nav-gallery">Gallery</a></li>
-    
+    <li id="nav-dashboard-li" style="display:none;"><a onclick="requireAuth('dashboard')" id="nav-dashboard">Dashboard</a></li>
   </ul>
   <div class="nav-right" id="navRight">
     <button class="btn btn-ghost" onclick="openAuthModal('login')">Log In</button>
@@ -271,17 +292,17 @@
 
     <!-- LEFT CONTENT -->
     <div class="hero-left">
-      <div class="hero-tag">Exclusive. Private. Yours.</div>
-      <h1>Your Content.<br/><em>Your Rules.</em></h1>
-      <p class="hero-sub">Subscribe or unlock exclusive photos and videos from Tanya. Premium content, just for you.</p>
+      <div class="hero-tag" id="heroTag">Exclusive. Private. Yours.</div>
+      <h1><span id="heroLine1">Your Content.</span><br/><em id="heroLine2">Your Rules.</em></h1>
+      <p class="hero-sub" id="heroSub">Subscribe or unlock exclusive photos and videos from Tanya. Premium content, just for you.</p>
       <div class="hero-actions">
       <button class="btn btn-gold" style="padding:14px 36px;font-size:12px;" onclick="showPage('gallery')">See Content →</button>
       <button class="btn btn-outline" style="padding:14px 36px;font-size:12px;" onclick="showPage('gallery')">See Example Gallery</button>
       </div>
       <div class="stats-row">
-        <div class="stat"><span class="stat-num">94%</span><span class="stat-label">Payout Rate</span></div>
-        <div class="stat"><span class="stat-num">$0</span><span class="stat-label">Setup Fees</span></div>
-        <div class="stat"><span class="stat-num">24h</span><span class="stat-label">Payout Cycle</span></div>
+        <div class="stat"><span class="stat-num" id="stat1Num">94%</span><span class="stat-label" id="stat1Label">Payout Rate</span></div>
+        <div class="stat"><span class="stat-num" id="stat2Num">$0</span><span class="stat-label" id="stat2Label">Setup Fees</span></div>
+        <div class="stat"><span class="stat-num" id="stat3Num">24h</span><span class="stat-label" id="stat3Label">Payout Cycle</span></div>
       </div>
       <div class="hero-scroll">
         <div class="scroll-line"></div>
@@ -292,15 +313,18 @@
     <!-- RIGHT BANNER -->
     <div class="hero-right">
       <div class="hero-banner-placeholder">
-        <div class="banner-art">
+        <!-- Real photo (shown if bannerImage is set in SITE config) -->
+        <img id="bannerPhoto" src="" alt="Banner" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;"/>
+        <!-- Animated art (default when no bannerImage) -->
+        <div class="banner-art" id="bannerArt">
           <div class="banner-ring"></div>
           <div class="banner-ring"></div>
           <div class="banner-ring"></div>
-          <div class="banner-monogram">T</div>
+          <div class="banner-monogram" id="bannerMonogram">T</div>
         </div>
         <div class="banner-overlay-text">
-          <div class="banner-name">Tanya</div>
-          <div class="banner-tagline">Premium Creator</div>
+          <div class="banner-name site-name" id="bannerName">Tanya</div>
+          <div class="banner-tagline" id="bannerTagline">Premium Creator</div>
         </div>
       </div>
       <div class="hero-badge">
@@ -539,40 +563,119 @@
 <div class="modal-bg" id="authModal">
   <div class="modal">
     <button class="modal-close" onclick="closeAuthModal()">✕</button>
-    <div class="modal-tag" id="authTag">Create Account</div>
-    <div class="modal-title" id="authTitle">Join Vaulted</div>
-    <div id="authRegisterFields">
-      <div class="form-group">
-        <label class="form-label">I am a…</label>
-        <select class="form-select" id="authRole">
-          <option value="creator">Creator — I want to sell content</option>
-          <option value="fan">Fan — I want to buy content</option>
-        </select>
+
+    <!-- STEP 1: ROLE SELECTION (register only) -->
+    <div id="authStepRole" class="role-select-screen" style="display:none;">
+      <div class="modal-tag">Get Started</div>
+      <div class="modal-title">I want to…</div>
+      <div class="role-select-subtitle">Choose your account type to continue</div>
+      <div class="role-cards">
+        <div class="role-card" id="roleCardCreator" onclick="selectRole('creator')">
+          <span class="role-icon">🎬</span>
+          <div class="role-name">Create</div>
+          <div class="role-desc">Upload content &amp; get paid</div>
+          <div class="role-perks">
+            <div class="role-perk"><span>✦</span>94% payout rate</div>
+            <div class="role-perk"><span>✦</span>Subscriptions &amp; PPV</div>
+            <div class="role-perk"><span>✦</span>Creator dashboard</div>
+          </div>
+        </div>
+        <div class="role-card" id="roleCardFan" onclick="selectRole('fan')">
+          <span class="role-icon">⭐</span>
+          <div class="role-name">Subscribe</div>
+          <div class="role-desc">Access exclusive content</div>
+          <div class="role-perks">
+            <div class="role-perk"><span>✦</span>Unlock any creator</div>
+            <div class="role-perk"><span>✦</span>Pay-per-view or subscribe</div>
+            <div class="role-perk"><span>✦</span>Instant access</div>
+          </div>
+        </div>
       </div>
+      <button class="btn btn-gold" style="width:100%;padding:14px;" onclick="proceedFromRoleSelect()">Continue →</button>
+      <div class="modal-switch" style="margin-top:16px;">Already have an account? <a onclick="switchToLogin()">Log in</a></div>
+    </div>
+
+    <!-- STEP 2: REGISTER FORM -->
+    <div id="authStepRegister" style="display:none;">
+      <button class="modal-back" onclick="goBackToRoleSelect()">← Back</button>
+      <div id="authRoleBadge" class="role-label-badge creator-badge">Creator Account</div>
+      <div class="modal-tag" id="authTag">Create Account</div>
+      <div class="modal-title" id="authTitle">Join <span class="site-name">Tanya</span></div>
       <div class="form-group">
         <label class="form-label">Display Name</label>
-        <input class="form-input" type="text" id="authName" placeholder="Your name"/>
+        <input class="form-input" type="text" id="authName" placeholder="Your name or alias"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="authEmail" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="authPassword" placeholder="Min 8 characters"/>
+      </div>
+      <div class="form-error" id="authError" style="margin-bottom:16px;"></div>
+      <button class="btn btn-gold" style="width:100%;padding:14px;" id="authSubmitBtn" onclick="submitAuth()">Create Account</button>
+      <div class="modal-switch">Already have an account? <a onclick="switchToLogin()">Log in</a></div>
+    </div>
+
+    <!-- STEP 3: LOGIN FORM -->
+    <div id="authStepLogin" style="display:none;">
+      <div class="modal-tag">Welcome Back</div>
+      <div class="modal-title">Log In</div>
+      <div style="display:flex;gap:10px;margin-bottom:24px;">
+        <div class="role-card" id="loginRoleCreator" onclick="selectLoginRole('creator')" style="flex:1;padding:16px 12px;">
+          <span style="font-size:20px;">🎬</span>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:.05em;">Creator</div>
+        </div>
+        <div class="role-card" id="loginRoleFan" onclick="selectLoginRole('fan')" style="flex:1;padding:16px 12px;">
+          <span style="font-size:20px;">⭐</span>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:.05em;">Fan</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="loginEmail" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="loginPassword" placeholder="Your password"/>
+      </div>
+      <div class="form-error" id="loginError" style="margin-bottom:16px;"></div>
+      <button class="btn btn-gold" style="width:100%;padding:14px;" id="loginSubmitBtn" onclick="submitLogin()">Log In</button>
+      <div class="modal-switch" style="margin-top:16px;">New here? <a onclick="switchToRegister()">Create account</a></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ FAN LIBRARY ══════════════════════════════════════════ -->
+<div id="fan-library" class="page">
+  <div class="gallery-header">
+    <div>
+      <div class="section-label" style="margin-bottom:6px;">My Account</div>
+      <div class="gallery-title">My Library</div>
+    </div>
+    <button class="btn btn-ghost" onclick="logout()" style="align-self:center;">Log Out</button>
+  </div>
+  <div style="max-width:900px;margin:0 auto;padding:40px 48px;">
+    <!-- Subscriptions -->
+    <div style="margin-bottom:48px;">
+      <div style="font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;">Active Subscriptions</div>
+      <div id="fanSubscriptions" style="background:var(--card);border:1px solid var(--border);padding:40px;text-align:center;color:var(--muted);font-size:13px;">
+        No active subscriptions yet. <a onclick="showPage('gallery')" style="color:var(--gold);cursor:pointer;">Browse content →</a>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input class="form-input" type="email" id="authEmail" placeholder="you@example.com"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Password</label>
-      <input class="form-input" type="password" id="authPassword" placeholder="Min 8 characters"/>
-    </div>
-    <div class="form-error" id="authError" style="margin-bottom:16px;"></div>
-    <button class="btn btn-gold" style="width:100%;padding:14px;" id="authSubmitBtn" onclick="submitAuth()">
-      Create Account
-    </button>
-    <div class="modal-switch" id="authSwitch">
-      Already have an account? <a onclick="toggleAuthMode()">Log in</a>
+    <!-- PPV Unlocks -->
+    <div>
+      <div style="font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;">Unlocked Posts</div>
+      <div id="fanUnlocks" style="background:var(--card);border:1px solid var(--border);padding:40px;text-align:center;color:var(--muted);font-size:13px;">
+        No unlocked posts yet. <a onclick="showPage('gallery')" style="color:var(--gold);cursor:pointer;">Browse content →</a>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- UNLOCK MODAL -->
+
 <div class="modal-bg" id="unlockModal">
   <div class="modal">
     <button class="modal-close" onclick="closeUnlockModal()">✕</button>
@@ -590,13 +693,59 @@
 <div class="toast" id="toast"><div class="toast-title" id="toastTitle">Success</div><div id="toastMsg"></div></div>
 
 <script>
-// ════════ CONFIG ════════
-const API = 'https://vaulted-backend-production.up.railway.app/api';
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║                  ✏️  SITE CONFIG — EDIT HERE                    ║
+// ║    Change everything about your site in this one section.       ║
+// ╚══════════════════════════════════════════════════════════════════╝
+const SITE = {
+
+  // ── BRAND ──────────────────────────────────────────────────────────
+  name:        'Tanya',              // Your creator name (shows in nav + banner)
+  tagline:     'Premium Creator',    // Small text under your name in the banner
+  pageTitle:   'Tanya — Premium Content',  // Browser tab title
+
+  // ── HERO TEXT ──────────────────────────────────────────────────────
+  heroTag:     'Exclusive. Private. Yours.',   // Small tag above the headline
+  heroLine1:   'Your Content.',                // First line of big headline
+  heroLine2:   'Your Rules.',                  // Second line (shown in gold italic)
+  heroSub:     'Subscribe or unlock exclusive photos and videos. Premium content, just for you.',
+
+  // ── HERO STATS (3 numbers shown below the headline) ────────────────
+  stat1Num:    '94%',    stat1Label: 'Payout Rate',
+  stat2Num:    '$0',     stat2Label: 'Setup Fees',
+  stat3Num:    '24h',    stat3Label: 'Payout Cycle',
+
+  // ── BANNER (right side of hero) ────────────────────────────────────
+  // Set bannerImage to a URL to show a real photo, or leave '' for the default animated art
+  bannerImage: '',       // e.g. 'https://example.com/your-photo.jpg'
+  bannerMonogram: 'T',   // Big letter shown in the animated art (ignored if bannerImage is set)
+
+  // ── COLORS ─────────────────────────────────────────────────────────
+  colorGold:      '#c9a84c',   // Primary accent color (buttons, highlights)
+  colorGoldLight: '#e2c47e',   // Hover state of gold
+  colorBackground:'#080808',   // Main page background
+  colorCard:      '#141414',   // Card background
+
+  // ── SUBSCRIPTION PRICING (shown on homepage plans) ─────────────────
+  monthlyPrice:  '9.99',
+  annualPrice:   '79.99',
+
+  // ── BACKEND API ────────────────────────────────────────────────────
+  apiUrl: 'https://vaulted-backend-production.up.railway.app/api',
+
+};
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║              END OF CONFIG — don't edit below this              ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+const API = SITE.apiUrl;
 
 // ════════ STATE ════════
 let currentUser = null;
 let authToken = localStorage.getItem('vaulted_token');
 let authMode = 'register';
+let selectedRole = 'creator'; // 'creator' | 'fan'
+let selectedLoginRole = 'fan';
 let selectedPriceType = 'free';
 let selectedUploadFiles = [];
 let currentUnlockPost = null;
@@ -605,6 +754,58 @@ let myPosts = [];
 
 // ════════ INIT ════════
 window.addEventListener('DOMContentLoaded', async () => {
+  // ── Apply SITE config to DOM ──────────────────────────────────────
+  document.title = SITE.pageTitle;
+
+  // Colors
+  document.documentElement.style.setProperty('--gold',       SITE.colorGold);
+  document.documentElement.style.setProperty('--gold-light', SITE.colorGoldLight);
+  document.documentElement.style.setProperty('--black',      SITE.colorBackground);
+  document.documentElement.style.setProperty('--card',       SITE.colorCard);
+
+  // Brand name (all occurrences)
+  document.querySelectorAll('.site-name').forEach(el => el.textContent = SITE.name);
+
+  // Hero text
+  const heroTagEl = document.getElementById('heroTag');
+  const heroLine1El = document.getElementById('heroLine1');
+  const heroLine2El = document.getElementById('heroLine2');
+  const heroSubEl = document.getElementById('heroSub');
+  if (heroTagEl)   heroTagEl.textContent  = SITE.heroTag;
+  if (heroLine1El) heroLine1El.textContent = SITE.heroLine1;
+  if (heroLine2El) heroLine2El.textContent = SITE.heroLine2;
+  if (heroSubEl)   heroSubEl.textContent   = SITE.heroSub;
+
+  // Stats
+  document.getElementById('stat1Num').textContent   = SITE.stat1Num;
+  document.getElementById('stat1Label').textContent = SITE.stat1Label;
+  document.getElementById('stat2Num').textContent   = SITE.stat2Num;
+  document.getElementById('stat2Label').textContent = SITE.stat2Label;
+  document.getElementById('stat3Num').textContent   = SITE.stat3Num;
+  document.getElementById('stat3Label').textContent = SITE.stat3Label;
+
+  // Banner
+  const bannerArt = document.getElementById('bannerArt');
+  const bannerPhoto = document.getElementById('bannerPhoto');
+  const bannerMonogramEl = document.getElementById('bannerMonogram');
+  if (bannerMonogramEl) bannerMonogramEl.textContent = SITE.bannerMonogram;
+  if (SITE.bannerImage && bannerPhoto) {
+    bannerPhoto.src = SITE.bannerImage;
+    bannerPhoto.style.display = 'block';
+    if (bannerArt) bannerArt.style.display = 'none';
+  }
+
+  // Banner name & tagline
+  const bannerNameEl = document.getElementById('bannerName');
+  const bannerTaglineEl = document.getElementById('bannerTagline');
+  if (bannerNameEl) bannerNameEl.textContent = SITE.name;
+  if (bannerTaglineEl) bannerTaglineEl.textContent = SITE.tagline;
+
+  // Auth & pricing
+  document.querySelectorAll('.site-monthly-price').forEach(el => el.textContent = '$' + SITE.monthlyPrice + '/mo');
+  document.querySelectorAll('.site-annual-price').forEach(el => el.textContent  = '$' + SITE.annualPrice + '/yr');
+
+  // ─────────────────────────────────────────────────────────────────
   if (authToken) await fetchMe();
   renderNav();
   renderGallery(demoItems);
@@ -646,37 +847,114 @@ async function fetchMe() {
   }
 }
 
+// ════════ AUTH MODAL FLOW ════════
 function openAuthModal(mode) {
   authMode = mode;
-  setAuthMode(mode);
-  document.getElementById('authModal').classList.add('open');
-  document.getElementById('authError').textContent = '';
+  const modal = document.getElementById('authModal');
+  modal.classList.add('open');
+  clearAuthErrors();
+  if (mode === 'register') {
+    showAuthStep('role');
+  } else {
+    showAuthStep('login');
+    // default login role to fan
+    selectLoginRole('fan');
+  }
 }
 
 function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
 
-function setAuthMode(mode) {
-  const isRegister = mode === 'register';
-  document.getElementById('authTag').textContent = isRegister ? 'Create Account' : 'Welcome Back';
-  document.getElementById('authTitle').textContent = isRegister ? 'Join Tanya' : 'Log In';
-  document.getElementById('authSubmitBtn').textContent = isRegister ? 'Create Account' : 'Log In';
-  document.getElementById('authRegisterFields').style.display = isRegister ? 'block' : 'none';
-  document.getElementById('authSwitch').innerHTML = isRegister
-    ? 'Already have an account? <a onclick="toggleAuthMode()">Log in</a>'
-    : 'New here? <a onclick="toggleAuthMode()">Create account</a>';
+function showAuthStep(step) {
+  ['role','register','login'].forEach(s => {
+    document.getElementById('authStep' + s.charAt(0).toUpperCase() + s.slice(1)).style.display = 'none';
+  });
+  document.getElementById('authStep' + step.charAt(0).toUpperCase() + step.slice(1)).style.display = 'block';
 }
 
-function toggleAuthMode() {
-  authMode = authMode === 'register' ? 'login' : 'register';
-  setAuthMode(authMode);
-  document.getElementById('authError').textContent = '';
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('roleCardCreator').classList.toggle('selected', role === 'creator');
+  document.getElementById('roleCardFan').classList.toggle('selected', role === 'fan');
+}
+
+function proceedFromRoleSelect() {
+  if (!selectedRole) { selectRole('fan'); }
+  // Update register form badge & title based on role
+  const isCreator = selectedRole === 'creator';
+  const badge = document.getElementById('authRoleBadge');
+  badge.textContent = isCreator ? 'Creator Account' : 'Fan Account';
+  badge.className = 'role-label-badge ' + (isCreator ? 'creator-badge' : 'fan-badge');
+  document.getElementById('authTag').textContent = 'Create Account';
+  document.getElementById('authTitle').textContent = isCreator ? 'Start Creating' : 'Join as a Fan';
+  showAuthStep('register');
+}
+
+function goBackToRoleSelect() {
+  showAuthStep('role');
+}
+
+function switchToLogin() {
+  showAuthStep('login');
+  selectLoginRole('fan');
+}
+
+function switchToRegister() {
+  showAuthStep('role');
+  selectRole(selectedRole || 'fan');
+}
+
+function selectLoginRole(role) {
+  selectedLoginRole = role;
+  document.getElementById('loginRoleCreator').classList.toggle('selected', role === 'creator');
+  document.getElementById('loginRoleFan').classList.toggle('selected', role === 'fan');
+}
+
+function clearAuthErrors() {
+  ['authError','loginError'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '';
+  });
 }
 
 async function submitAuth() {
   const email = document.getElementById('authEmail').value.trim();
   const password = document.getElementById('authPassword').value;
+  const displayName = document.getElementById('authName').value.trim();
   const errEl = document.getElementById('authError');
   const btn = document.getElementById('authSubmitBtn');
+
+  if (!email || !password) { errEl.textContent = 'Email and password are required.'; return; }
+  if (!displayName) { errEl.textContent = 'Please enter your display name.'; return; }
+
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  try {
+    const data = await api('POST', '/auth/register', { email, password, displayName, role: selectedRole });
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('vaulted_token', authToken);
+    closeAuthModal();
+    renderNav();
+    showToast('Welcome!', `Account created as ${currentUser.displayName || currentUser.email}`);
+    if (currentUser.role === 'creator') {
+      showPage('dashboard');
+    } else {
+      showPage('gallery');
+    }
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.innerHTML = 'Create Account';
+    btn.disabled = false;
+  }
+}
+
+async function submitLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginSubmitBtn');
 
   if (!email || !password) { errEl.textContent = 'Email and password are required.'; return; }
 
@@ -684,26 +962,22 @@ async function submitAuth() {
   btn.disabled = true;
 
   try {
-    let data;
-    if (authMode === 'register') {
-      const displayName = document.getElementById('authName').value.trim();
-      data = await api('POST', '/auth/register', { email, password, displayName, role: 'fan' });
-    } else {
-      data = await api('POST', '/auth/login', { email, password });
-    }
-
+    const data = await api('POST', '/auth/login', { email, password });
     authToken = data.token;
     currentUser = data.user;
     localStorage.setItem('vaulted_token', authToken);
     closeAuthModal();
     renderNav();
-    showToast('Welcome!', `Logged in as ${currentUser.displayName || currentUser.email}`);
-
-    showPage('gallery');
+    showToast('Welcome back!', `Logged in as ${currentUser.displayName || currentUser.email}`);
+    if (currentUser.role === 'creator') {
+      showPage('dashboard');
+    } else {
+      showPage('gallery');
+    }
   } catch (err) {
     errEl.textContent = err.message;
   } finally {
-    btn.innerHTML = authMode === 'register' ? 'Create Account' : 'Log In';
+    btn.innerHTML = 'Log In';
     btn.disabled = false;
   }
 }
@@ -719,10 +993,18 @@ function logout() {
 
 function renderNav() {
   const navRight = document.getElementById('navRight');
+  // Show/hide Dashboard nav link based on role
+  const dashLink = document.getElementById('nav-dashboard-li');
+  if (dashLink) dashLink.style.display = (currentUser && currentUser.role === 'creator') ? 'block' : 'none';
+
   if (currentUser) {
+    const roleTag = currentUser.role === 'creator'
+      ? `<span style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.35);padding:2px 8px;">Creator</span>`
+      : `<span style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#4caf50;border:1px solid rgba(76,175,80,.35);padding:2px 8px;">Fan</span>`;
     navRight.innerHTML = `
       <span style="font-size:11px;color:var(--muted);letter-spacing:.05em;">${currentUser.displayName || currentUser.email}</span>
-      
+      ${roleTag}
+      ${currentUser.role === 'creator' ? `<button class="btn btn-outline" style="padding:8px 16px;font-size:10px;" onclick="showPage('dashboard')">Dashboard</button>` : `<button class="btn btn-outline" style="padding:8px 16px;font-size:10px;" onclick="showPage('fan-library')">My Library</button>`}
       <button class="btn btn-ghost" onclick="logout()">Log Out</button>
     `;
   } else {
@@ -734,9 +1016,13 @@ function renderNav() {
 }
 
 function requireAuth(page) {
-  if (page === 'dashboard' && (!currentUser || currentUser.role !== 'creator')) {
-    showPage('gallery');
-    return;
+  if (page === 'dashboard') {
+    if (!currentUser) { openAuthModal('login'); return; }
+    if (currentUser.role !== 'creator') {
+      showToast('Creators Only', 'The dashboard is for creator accounts.', true);
+      showPage('gallery');
+      return;
+    }
   }
   if (!currentUser) { openAuthModal('login'); return; }
   showPage(page);
@@ -746,7 +1032,7 @@ function requireAuth(page) {
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  ['home','gallery','dashboard'].forEach(p => {
+  ['home','gallery','dashboard','fan-library'].forEach(p => {
     const el = document.getElementById('nav-' + p);
     if (el) el.classList.toggle('active', p === id);
   });
