@@ -273,13 +273,13 @@
     <div class="hero-left">
       <div class="hero-tag">Exclusive. Private. Yours.</div>
       <h1>Your Content.<br/><em>Your Rules.</em></h1>
-      <p class="hero-sub">Subscribe or unlock exclusive photos and videos from Tanya. Premium content, just for you.</p>
+      <p class="hero-sub">Subscribe or unlock exclusive photos and videos. Premium content, just for you.</p>
       <div class="hero-actions">
       <button class="btn btn-gold" style="padding:14px 36px;font-size:12px;" onclick="showPage('gallery')">See Content →</button>
       <button class="btn btn-outline" style="padding:14px 36px;font-size:12px;" onclick="showPage('gallery')">See Example Gallery</button>
       </div>
       <div class="stats-row">
-        <div class="stat"><span class="stat-num">94%</span><span class="stat-label">Payout Rate</span></div>
+        <div class="stat"><span class="stat-num creator-earn-display">94%</span><span class="stat-label">Payout Rate</span></div>
         <div class="stat"><span class="stat-num">$0</span><span class="stat-label">Setup Fees</span></div>
         <div class="stat"><span class="stat-num">24h</span><span class="stat-label">Payout Cycle</span></div>
       </div>
@@ -540,13 +540,13 @@
   <div class="modal">
     <button class="modal-close" onclick="closeAuthModal()">✕</button>
     <div class="modal-tag" id="authTag">Create Account</div>
-    <div class="modal-title" id="authTitle">Join Vaulted</div>
+    <div class="modal-title" id="authTitle">Join Tanya</div>
     <div id="authRegisterFields">
       <div class="form-group">
-        <label class="form-label">I am a…</label>
+        <label class="form-label">I want to…</label>
         <select class="form-select" id="authRole">
-          <option value="creator">Creator — I want to sell content</option>
-          <option value="fan">Fan — I want to buy content</option>
+          <option value="fan">Browse & buy content (Fan)</option>
+          <option value="creator">Upload & sell content (Creator)</option>
         </select>
       </div>
       <div class="form-group">
@@ -591,6 +591,21 @@
 
 <script>
 // ════════ CONFIG ════════
+// ═══════════════════════════════════════════════
+// ✏️  EASY EDIT ZONE — Change anything here!
+// ═══════════════════════════════════════════════
+
+const SITE_NAME = 'Tanya';           // ← Change site name here
+const SITE_TAGLINE = 'Exclusive. Private. Yours.';  // ← Hero tagline
+const SITE_DESCRIPTION = 'Subscribe or unlock exclusive photos and videos. Premium content, just for you.'; // ← Hero description
+const MONTHLY_PRICE = '₹299';        // ← Default monthly price shown on home
+const ANNUAL_PRICE = '₹2499';        // ← Default annual price shown on home
+const PLATFORM_CUT = '6%';          // ← Platform fee shown on home
+const CREATOR_EARN = '94%';         // ← Creator earnings shown on home
+
+// ═══════════════════════════════════════════════
+// 🔧 TECHNICAL SETTINGS — Don't change these
+// ═══════════════════════════════════════════════
 const API = 'https://vaulted-backend-production.up.railway.app/api';
 
 // ════════ STATE ════════
@@ -602,6 +617,20 @@ let selectedUploadFiles = [];
 let currentUnlockPost = null;
 let selectedUnlockOption = null;
 let myPosts = [];
+
+// ════════ APPLY CONFIG ════════
+function applyConfig() {
+  // Apply site name everywhere
+  document.querySelectorAll('.logo').forEach(el => el.textContent = SITE_NAME);
+  document.querySelectorAll('.banner-name').forEach(el => el.textContent = SITE_NAME);
+  document.title = SITE_NAME + ' — Premium Content';
+  // Apply tagline
+  document.querySelectorAll('.hero-tag').forEach(el => el.textContent = SITE_TAGLINE);
+  // Apply prices in plans section
+  document.querySelectorAll('.monthly-price-display').forEach(el => el.textContent = MONTHLY_PRICE);
+  document.querySelectorAll('.annual-price-display').forEach(el => el.textContent = ANNUAL_PRICE);
+  document.querySelectorAll('.creator-earn-display').forEach(el => el.textContent = CREATOR_EARN);
+}
 
 // ════════ INIT ════════
 window.addEventListener('DOMContentLoaded', async () => {
