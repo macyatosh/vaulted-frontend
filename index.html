@@ -1018,6 +1018,11 @@ const ANNUAL_PRICE = '₹2499';        // ← Default annual price shown on home
 const PLATFORM_CUT = '6%';          // ← Platform fee shown on home
 const CREATOR_EARN = '94%';         // ← Creator earnings shown on home
 
+// ── BANNER PHOTO ──────────────────────────────
+const BANNER_PHOTO = 'https://i.postimg.cc/rmgn1PS8/photo-6096168042283863776-y.jpg'; // ← Your photo URL
+const BANNER_PHOTO_OPACITY = '0.6';   // ← 0.1 (subtle) to 1.0 (full bright)
+const BANNER_PHOTO_POSITION = 'center top'; // ← 'center top', 'center center', 'center bottom'
+
 // ═══════════════════════════════════════════════
 // 🔧 TECHNICAL SETTINGS — Don't change these
 // ═══════════════════════════════════════════════
@@ -1045,6 +1050,16 @@ function applyConfig() {
   document.querySelectorAll('.monthly-price-display').forEach(el => el.textContent = MONTHLY_PRICE);
   document.querySelectorAll('.annual-price-display').forEach(el => el.textContent = ANNUAL_PRICE);
   document.querySelectorAll('.creator-earn-display').forEach(el => el.textContent = CREATOR_EARN);
+  // Apply banner photo
+  if (BANNER_PHOTO) {
+    const banner = document.querySelector('.hero-banner-placeholder');
+    if (banner) {
+      const img = document.createElement('img');
+      img.src = BANNER_PHOTO;
+      img.style.cssText = `position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${BANNER_PHOTO_POSITION};z-index:0;opacity:${BANNER_PHOTO_OPACITY};`;
+      banner.insertBefore(img, banner.firstChild);
+    }
+  }
 }
 
 // ════════ INIT ════════
