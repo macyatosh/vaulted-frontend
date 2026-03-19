@@ -1018,11 +1018,6 @@ const ANNUAL_PRICE = '₹2499';        // ← Default annual price shown on home
 const PLATFORM_CUT = '6%';          // ← Platform fee shown on home
 const CREATOR_EARN = '94%';         // ← Creator earnings shown on home
 
-// ── BANNER PHOTO ──────────────────────────────
-const BANNER_PHOTO = 'https://i.ibb.co/LDBQ94bR/photo-6096168042283863776-y.jpg'; // ← Your photo URL
-const BANNER_PHOTO_OPACITY = '0.6';   // ← 0.1 (subtle) to 1.0 (full bright)
-const BANNER_PHOTO_POSITION = 'center top'; // ← 'center top', 'center center', 'center bottom'
-
 // ═══════════════════════════════════════════════
 // 🔧 TECHNICAL SETTINGS — Don't change these
 // ═══════════════════════════════════════════════
@@ -1050,16 +1045,6 @@ function applyConfig() {
   document.querySelectorAll('.monthly-price-display').forEach(el => el.textContent = MONTHLY_PRICE);
   document.querySelectorAll('.annual-price-display').forEach(el => el.textContent = ANNUAL_PRICE);
   document.querySelectorAll('.creator-earn-display').forEach(el => el.textContent = CREATOR_EARN);
-  // Apply banner photo
-  if (BANNER_PHOTO) {
-    const banner = document.querySelector('.hero-banner-placeholder');
-    if (banner) {
-      const img = document.createElement('img');
-      img.src = BANNER_PHOTO;
-      img.style.cssText = `position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${BANNER_PHOTO_POSITION};z-index:0;opacity:${BANNER_PHOTO_OPACITY};`;
-      banner.insertBefore(img, banner.firstChild);
-    }
-  }
 }
 
 // ════════ INIT ════════
@@ -1068,6 +1053,36 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (authToken) await fetchMe();
   renderNav();
   loadGallery();
+
+  // ── Handle Razorpay Payment Link callback ──
+  const urlParams = new URLSearchParams(window.location.search);
+  const paymentId = urlParams.get('razorpay_payment_id');
+  const paymentLinkId = urlParams.get('razorpay_payment_link_id');
+  const paymentLinkStatus = urlParams.get('razorpay_payment_link_status');
+  const signature = urlParams.get('razorpay_signature');
+
+  if (paymentId && paymentLinkId) {
+    // Clean URL
+    window.history.replaceState({}, '', window.location.pathname);
+    if (paymentLinkStatus === 'paid') {
+      try {
+        await api('POST', '/payments/paymentlink/verify', {
+          razorpay_payment_id: paymentId,
+          razorpay_payment_link_id: paymentLinkId,
+          razorpay_payment_link_status: paymentLinkStatus,
+          razorpay_signature: signature,
+        });
+        showToast('Payment Successful! 🎉', 'Your content has been unlocked!');
+        if (authToken) await fetchMe();
+        loadGallery();
+        showPage('gallery');
+      } catch(err) {
+        showToast('Verification Error', err.message, true);
+      }
+    } else {
+      showToast('Payment Failed', 'Your payment was not completed.', true);
+    }
+  }
 });
 
 // ════════ API HELPERS ════════
@@ -1350,66 +1365,23 @@ function closeUnlockModal() { document.getElementById('unlockModal').classList.r
 async function proceedUnlock() {
   if (!selectedUnlockOption || !currentUnlockPost) return;
   const btn = document.getElementById('unlockProceedBtn');
-  btn.innerHTML = '<span class="spinner"></span> Loading…';
+  btn.innerHTML = '<span class="spinner"></span> Creating payment link…';
   btn.disabled = true;
 
   try {
-    if (selectedUnlockOption === 'subscription') {
-      // Get subscription order from backend
-      const data = await api('POST', '/payments/subscription/create', {
-        creatorSlug: currentUnlockPost.creatorSlug,
-        interval: 'month',
-      });
-      openRazorpay({
-        key: data.keyId,
-        subscription_id: data.subscriptionId,
-        name: 'Tanya',
-        description: `Subscription to ${data.creatorName}`,
-        amount: data.amount,
-        currency: data.currency,
-        prefill: { name: data.fanName, email: data.fanEmail },
-        theme: { color: '#C9A84C' },
-        handler: async (response) => {
-          await api('POST', '/payments/subscription/verify', {
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_subscription_id: response.razorpay_subscription_id,
-            razorpay_signature: response.razorpay_signature,
-            creatorSlug: currentUnlockPost.creatorSlug,
-            interval: 'month',
-          });
-          closeUnlockModal();
-          showToast('Subscribed! 🎉', 'You now have full access.');
-          loadGallery();
-        }
-      });
-    } else {
-      // PPV — create order
-      const data = await api('POST', '/payments/ppv/create', { postId: currentUnlockPost._id });
-      openRazorpay({
-        key: data.keyId,
-        order_id: data.orderId,
-        name: 'Tanya',
-        description: data.postTitle,
-        amount: data.amount,
-        currency: data.currency,
-        prefill: { name: data.fanName, email: data.fanEmail },
-        theme: { color: '#C9A84C' },
-        handler: async (response) => {
-          await api('POST', '/payments/ppv/verify', {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            postId: currentUnlockPost._id,
-          });
-          closeUnlockModal();
-          showToast('Unlocked! 🎉', 'Content is now available.');
-          loadGallery();
-        }
-      });
-    }
+    const isSubscription = selectedUnlockOption === 'subscription';
+    const data = await api('POST', '/payments/paymentlink/create', {
+      postId: isSubscription ? null : currentUnlockPost._id,
+      creatorSlug: currentUnlockPost.creatorSlug,
+      type: isSubscription ? 'subscription' : 'ppv',
+    });
+
+    // Open Razorpay payment link in same tab
+    // After payment, Razorpay redirects back to our callback URL
+    window.location.href = data.paymentLink;
+
   } catch (err) {
     showToast('Error', err.message, true);
-  } finally {
     btn.innerHTML = 'Continue to Payment →';
     btn.disabled = false;
   }
